@@ -17,16 +17,20 @@ const buildFormData = (formData, payload, name) => {
 const formatCallbacks = (options, requestOptions, resolve, reject) => {
   if (options.success) {
     requestOptions.success = options.success;
+  } else if (options.successDataType === 'response' || options.successDataType === undefined) {
+    requestOptions.success = (response, statusText, xhr) => resolve(response);
   } else if (options.successDataType === 'xhr'){
-    requestOptions.success = (response, statusText, xhr) => resolve(xhr);
-  } else if (options.successDataType === 'statusText'){
     requestOptions.success = (response, statusText, xhr) => resolve(statusText);
+  } else if (options.successDataType === 'statusText'){
+    requestOptions.success = (response, statusText, xhr) => resolve(xhr);
   } else {
     requestOptions.success = (response, statusText, xhr) => resolve(response);
   }
 
   if (options.error) {
     requestOptions.error = options.error;
+  } else if (options.errDataType === 'response' || options.errorDataType === undefined) {
+    requestOptions.error = (response, statusText, xhr) => reject(response);
   } else if (options.errorDataType === 'xhr'){
     requestOptions.error = (response, statusText, xhr) => reject(xhr);
   } else if (options.errorDataType === 'statusText'){
@@ -48,9 +52,9 @@ const formatOptions = (options) => {
   } else {
     // Convert JSON data to FormData
     const formData = new FormData();
-    requestOptions.data = buildFormData(formData, options.data, options.paramKey);
+    requestOptions.data = buildFormData(formData, options.data);
   }
-  
+  // format Promise and lifecycle callbacks into requestOptions
   requestOptions.crossDomain = options.crossDomain || false;
   requestOptions.withCredentials = options.withCredentials || false;
 
