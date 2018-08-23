@@ -24,6 +24,13 @@ const formatCallbacks = (options, requestOptions, resolve, reject) => {
   } else if (options.successDataType === 'statusText'){
     requestOptions.success = (response, statusText, xhr) => resolve(xhr);
   } else {
+    console.warn("Invalid value "+`%c'${options.successDataType}' `+"%cfor key %c[successDataType]%c in options for rAjax. Defaulting to %c'response'.%c Valid values are: 'response', 'statusText', 'xhr', or null.",
+    'color: red;',
+    'color: inherit;',
+    'color: blue;',
+    'color: inherit;',
+    'color: red;',
+    'color: inherit');
     requestOptions.success = (response, statusText, xhr) => resolve(response);
   }
 
@@ -36,6 +43,13 @@ const formatCallbacks = (options, requestOptions, resolve, reject) => {
   } else if (options.errorDataType === 'statusText'){
     requestOptions.error = (response, statusText, xhr) => reject(statusText);
   } else {
+    console.warn("Invalid value "+`%c'${options.errorDataType}' `+"%cfor key %c[errorDataType]%c in options for rAjax. Defaulting to %c'response'.%c Valid values are: 'response', 'statusText', 'xhr', or null.",
+    'color: red;',
+    'color: inherit;',
+    'color: blue;',
+    'color: inherit;',
+    'color: red;',
+    'color: inherit');
     requestOptions.error = (response, statusText, xhr) => reject(response);
   }
 
@@ -46,7 +60,7 @@ const formatCallbacks = (options, requestOptions, resolve, reject) => {
 const formatOptions = (options) => {
   const requestOptions = {};
   requestOptions.type = options.type || 'GET';
-  requestOptions.url = options.url || '/';
+  requestOptions.url = (typeof options === "string") ? options : (options.url || '/');
   if (typeof options.data === 'string') {
     requestOptions.data = options.data;
   } else {
@@ -54,7 +68,7 @@ const formatOptions = (options) => {
     const formData = new FormData();
     requestOptions.data = buildFormData(formData, options.data);
   }
-  // format Promise and lifecycle callbacks into requestOptions
+
   requestOptions.crossDomain = options.crossDomain || false;
   requestOptions.withCredentials = options.withCredentials || false;
 
@@ -78,3 +92,5 @@ const rAjax = (options) => {
     });
   });
 };
+
+export default rAjax;
